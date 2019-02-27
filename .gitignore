@@ -1,0 +1,6 @@
+.svn
+.vscode
+node_modules
+
+*.o
+*/*.o
