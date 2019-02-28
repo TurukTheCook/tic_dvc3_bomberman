@@ -1,12 +1,5 @@
 #include "game.h"
 
-#define WIDTH 1280
-#define HEIGHT 720
-#define PLAYER_WIDTH 75
-#define PLAYER_HEIGHT 75
-#define BOMB_WIDTH 100
-#define BOMB_HEIGHT 100
-
 /**
  * Fonction d'init du jeu et de la SDL
  * @return game_t *game
@@ -18,23 +11,40 @@ game_t *game_init(void)
     game = malloc(sizeof(game_t));
 
     // init des propriétés du jeu
-    game->screenSize.x = WIDTH;
-    game->screenSize.y = HEIGHT;
+    game->screenSize.x = WINDOW_WIDTH;
+    game->screenSize.y = WINDOW_HEIGHT;
     game->window = NULL;
     game->renderer = NULL;
+    game->font = NULL;
     game->playerTexture = NULL;
     game->bombTexture = NULL;
-    game->playerPosition.x = (WIDTH / 2 - PLAYER_WIDTH);
-    game->playerPosition.y = (HEIGHT / 2 - PLAYER_HEIGHT);
+    game->menuJoinTexture = NULL;
+    game->menuHostTexture = NULL;
+    game->menuSelected = 1;
+    game->playerPosition.x = (WINDOW_WIDTH / 2 - PLAYER_WIDTH);
+    game->playerPosition.y = (WINDOW_HEIGHT / 2 - PLAYER_HEIGHT);
     game->playerPosition.w = PLAYER_WIDTH;
     game->playerPosition.h = PLAYER_HEIGHT;
     game->bombPosition.x = -9999;
     game->bombPosition.y = -9999;
     game->bombPosition.w = BOMB_WIDTH;
     game->bombPosition.h = BOMB_HEIGHT;
+    game->menuJoinPosition.x = (WINDOW_WIDTH / 2 -150);
+    game->menuJoinPosition.y = (WINDOW_HEIGHT / 3);
+    game->menuJoinPosition.w = 24;
+    game->menuJoinPosition.h = 24;
+    game->menuHostPosition.x = (WINDOW_WIDTH / 2 -150);
+    game->menuHostPosition.y = (WINDOW_HEIGHT - (WINDOW_HEIGHT / 3));
+    game->menuHostPosition.w = 24;
+    game->menuHostPosition.h = 24;
 
     //init SDL
     if (sdl_init(game) < 0) {
+        return NULL;
+    }
+
+    //init menu
+    if (menu_init(game) < 0) {
         return NULL;
     }
 
@@ -57,7 +67,7 @@ game_t *game_init(void)
 */
 int sdl_init(game_t *game)
 {
-        // init de la SDL
+    // init de la SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         return print_error_sdl(game, "Erreur: SDL_Init video..");
     }
@@ -83,6 +93,33 @@ int sdl_init(game_t *game)
 
     return 0;
 }
+
+/**
+ * Init du menu
+ * @params game_t *game
+*/
+int menu_init(game_t *game)
+{
+    // init du texte
+    if(TTF_Init() < 0) {
+        return print_error_sdl(game, "Erreur: initialisation du texte..");
+    }
+
+    game->font = TTF_OpenFont("OpenSans-Regular.ttf", 24);
+
+    if (!game->font) {
+        return print_error_sdl(game, "Erreur: récupération de la police de texte..");
+    }
+
+    SDL_Color white = {255, 255, 255, 0};
+    SDL_Color yellow = {255, 255, 0, 0};
+    get_text_and_rect(game, game->menuJoinPosition.x, game->menuJoinPosition.y, "Rejoindre une partie", yellow, &game->menuJoinTexture, &game->menuJoinPosition);
+    get_text_and_rect(game, game->menuHostPosition.x, game->menuHostPosition.y, "Heberger une partie", white, &game->menuHostTexture, &game->menuHostPosition);
+
+    return 0;
+}
+
+
 
 /**
  * Init de la texture du joueur
@@ -142,7 +179,7 @@ void game_render(game_t *game)
     SDL_RenderClear(game->renderer);
 
     // draw bomb only if on screen
-    if (game->bombPosition.x > (-15) && game->bombPosition.x < WIDTH && game->bombPosition.y > (-15) && game->bombPosition.y < HEIGHT) {
+    if (game->bombPosition.x > (-15) && game->bombPosition.x < WINDOW_WIDTH && game->bombPosition.y > (-15) && game->bombPosition.y < WINDOW_HEIGHT) {
         SDL_RenderCopy(game->renderer, game->bombTexture, NULL, &game->bombPosition);
     }
 
@@ -262,6 +299,7 @@ void game_kill(game_t *game)
         }
 
         // unconditionals
+        TTF_Quit();
         SDL_Quit();
         free(game);
     }
