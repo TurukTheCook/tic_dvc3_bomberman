@@ -22,15 +22,27 @@
 #define SERVER_PORT 1407
 #define FPS 60
 #define BACKLOG 5
+#define WINDOW_WIDTH 1280
+#define WINDOW_HEIGHT 720
+#define PLAYER_WIDTH 75
+#define PLAYER_HEIGHT 75
+#define BOMB_WIDTH 100
+#define BOMB_HEIGHT 100
 
 typedef struct {
     SDL_Point screenSize;
     SDL_Window *window;
     SDL_Renderer *renderer;
+    TTF_Font *font;
     SDL_Texture *playerTexture;
     SDL_Texture *bombTexture;
+    SDL_Texture *menuJoinTexture;
+    SDL_Texture *menuHostTexture;
+    int menuSelected;
     SDL_Rect playerPosition;
     SDL_Rect bombPosition;
+    SDL_Rect menuJoinPosition;
+    SDL_Rect menuHostPosition;
 } game_t;
 
 // fonctions d'init
@@ -38,6 +50,14 @@ int sdl_init(game_t *game);
 game_t *game_init(void);
 int player_init(game_t *game);
 int bomb_init(game_t *game);
+
+// menu
+int menu_init(game_t *game);
+int get_text_and_rect(game_t *game, int pos_x, int pos_y, char *text, SDL_Color color, SDL_Texture **texture, SDL_Rect *rect);
+void menu_run(game_t *game, SDL_Event *event, SDL_bool *menu, SDL_bool *play);
+void menu_render(game_t *game);
+void menu_change(game_t *game, SDL_Keycode direction);
+void menu_choose(game_t *game, SDL_bool *menu);
 
 // fonctions serveur / client
 int read_client(int client);
