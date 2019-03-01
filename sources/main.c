@@ -36,12 +36,17 @@ int main(int argc, char **argv)
     SDL_Event event;
     SDL_bool play = SDL_TRUE;
     SDL_bool menu = SDL_TRUE;
+    SDL_bool welcome = SDL_TRUE;
 
     while (play)
     {
         currTime = SDL_GetTicks(); // récupère le temps actuel en ms
         if ((currTime - prevTime) > msPerFrame) { // continue si la diff de temps est supérieure à msPerFrame (16 pour 60fps)
             prevTime = currTime;
+
+            if (welcome) {
+                welcome_run(game, &event, &welcome);
+            }
 
             if (menu) {
                 // gestion du menu
