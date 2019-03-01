@@ -1,38 +1,21 @@
 #include "game.h"
 
 /**
- * Créer du texte
- * @params game_t *game [...]
+ * Render l'ecran d'accueil
+ * @params game_t *game
 */
-int get_text_and_rect(game_t *game, int pos_x, int pos_y, char *text, SDL_Color color, SDL_Texture **texture, SDL_Rect *rect)
+void welcome_run(game_t *game, SDL_Event *event, SDL_bool *welcome)
 {
-    int text_width;
-    int text_height;
-    SDL_Surface *textSurface;
-    // SDL_Color textColor = {255, 255, 255, 0};
+    SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255);
+    SDL_RenderClear(game->renderer);
 
-    textSurface = TTF_RenderText_Solid(game->font, text, color);
+    // draw text
+    SDL_RenderCopy(game->renderer, game->splashScreenTexture, NULL, &game->splashScreenPosition);
+    
+    SDL_RenderPresent(game->renderer);
 
-    if (!textSurface) {
-        return print_error_sdl(game, "Erreur: chargement de la texture du texte..");
-    }
-
-    *texture = SDL_CreateTextureFromSurface(game->renderer, textSurface);
-
-    if (!texture) {
-        return print_error_sdl(game, "Erreur: chargement de la texture du texte..");
-    }
-
-    text_width = textSurface->w;
-    text_height = textSurface->h;
-
-    rect->x = pos_x;
-    rect->y = pos_y;
-    rect->w = text_width;
-    rect->h = text_height;
-
-    SDL_FreeSurface(textSurface);
-    return 0;
+    SDL_Delay(3000);
+    *welcome = SDL_FALSE;
 }
 
 /**
@@ -94,7 +77,13 @@ void menu_render(game_t *game)
 void menu_change(game_t *game, SDL_Keycode direction)
 {
     SDL_Color white = {255, 255, 255, 0};
-    SDL_Color yellow = {255, 255, 0, 0};
+    SDL_Color crimson = {220, 20, 60, 0};
+
+    // needed to center text
+    int menuJoinTextureWidth, menuJoinTextureHeight;
+    int menuHostTextureWidth, menuHostTextureHeight;
+    SDL_QueryTexture(game->menuJoinTexture, NULL, NULL, &menuJoinTextureWidth, &menuJoinTextureHeight);
+    SDL_QueryTexture(game->menuHostTexture, NULL, NULL, &menuHostTextureWidth, &menuHostTextureHeight);
 
     switch (direction)
     {
@@ -102,15 +91,15 @@ void menu_change(game_t *game, SDL_Keycode direction)
             game->menuSelected = 1;
             SDL_DestroyTexture(game->menuJoinTexture);
             SDL_DestroyTexture(game->menuHostTexture);
-            get_text_and_rect(game, game->menuJoinPosition.x, game->menuJoinPosition.y, "Rejoindre une partie", yellow, &game->menuJoinTexture, &game->menuJoinPosition);
-            get_text_and_rect(game, game->menuHostPosition.x, game->menuHostPosition.y, "Heberger une partie", white, &game->menuHostTexture, &game->menuHostPosition);
+            get_text_and_rect(game, game->menuJoinPosition.x + (menuJoinTextureWidth / 2), game->menuJoinPosition.y, game->menuJoinText, crimson, &game->menuJoinTexture, &game->menuJoinPosition);
+            get_text_and_rect(game, game->menuHostPosition.x + (menuHostTextureWidth / 2), game->menuHostPosition.y, game->menuHostText, white, &game->menuHostTexture, &game->menuHostPosition);
             break;
         case SDLK_DOWN:
             game->menuSelected = 2;
             SDL_DestroyTexture(game->menuJoinTexture);
             SDL_DestroyTexture(game->menuHostTexture);
-            get_text_and_rect(game, game->menuJoinPosition.x, game->menuJoinPosition.y, "Rejoindre une partie", white, &game->menuJoinTexture, &game->menuJoinPosition);
-            get_text_and_rect(game, game->menuHostPosition.x, game->menuHostPosition.y, "Heberger une partie", yellow, &game->menuHostTexture, &game->menuHostPosition);
+            get_text_and_rect(game, game->menuJoinPosition.x + (menuJoinTextureWidth / 2), game->menuJoinPosition.y, game->menuJoinText, white, &game->menuJoinTexture, &game->menuJoinPosition);
+            get_text_and_rect(game, game->menuHostPosition.x + (menuHostTextureWidth / 2), game->menuHostPosition.y, game->menuHostText, crimson, &game->menuHostTexture, &game->menuHostPosition);
             break;
 
         default:

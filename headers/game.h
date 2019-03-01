@@ -24,10 +24,10 @@
 #define BACKLOG 5
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
-#define PLAYER_WIDTH 75
-#define PLAYER_HEIGHT 75
-#define BOMB_WIDTH 100
-#define BOMB_HEIGHT 100
+#define PLAYER_WIDTH 89
+#define PLAYER_HEIGHT 97
+#define BOMB_WIDTH 43
+#define BOMB_HEIGHT 50
 
 typedef struct {
     SDL_Point screenSize;
@@ -38,21 +38,29 @@ typedef struct {
     SDL_Texture *bombTexture;
     SDL_Texture *menuJoinTexture;
     SDL_Texture *menuHostTexture;
+    SDL_Texture *splashScreenTexture;
+    char *menuJoinText;
+    char *menuHostText;
     int menuSelected;
     SDL_Rect playerPosition;
     SDL_Rect bombPosition;
     SDL_Rect menuJoinPosition;
     SDL_Rect menuHostPosition;
+    SDL_Rect splashScreenPosition;
+    int menuJoinWidth;
+    int menuHostWidth;
 } game_t;
 
 // fonctions d'init
 int sdl_init(game_t *game);
 game_t *game_init(void);
+int splash_init(game_t *game);
+int menu_init(game_t *game);
 int player_init(game_t *game);
 int bomb_init(game_t *game);
 
 // menu
-int menu_init(game_t *game);
+void welcome_run(game_t *game, SDL_Event *event, SDL_bool *welcome); //splashscreen
 int get_text_and_rect(game_t *game, int pos_x, int pos_y, char *text, SDL_Color color, SDL_Texture **texture, SDL_Rect *rect);
 void menu_run(game_t *game, SDL_Event *event, SDL_bool *menu, SDL_bool *play);
 void menu_render(game_t *game);
