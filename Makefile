@@ -19,7 +19,7 @@ SDL2	= $(shell sdl2-config --cflags --libs)
 ## Rules ##
 
 all: $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -L./ -o $(NAME) $(SDL2) -lSDL2_image -lSDL2_ttf
+	$(CC) $(CFLAGS) $(OBJ) -L./ -o $(NAME) $(SDL2) -lSDL2_image -lSDL2_ttf -lpthread
 
 clean:
 	$(RM) $(OBJ)

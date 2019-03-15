@@ -12,6 +12,8 @@
 #include <sys/types.h>
 #include <sys/select.h>
 #include <sys/socket.h>
+#include<pthread.h>
+
 
 // SDL
 #include <SDL2/SDL.h>
@@ -24,10 +26,10 @@
 #define BACKLOG 5
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
-#define PLAYER_WIDTH 89
-#define PLAYER_HEIGHT 97
-#define BOMB_WIDTH 43
-#define BOMB_HEIGHT 50
+#define PLAYER_WIDTH 90 // 89
+#define PLAYER_HEIGHT 100 // 97
+#define BOMB_WIDTH 40 // 43
+#define BOMB_HEIGHT 50 // 50
 
 typedef struct {
     SDL_Point screenSize;
